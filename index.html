@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Siga o Caminho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              sky: { // Example of extending colors if needed, though default sky is good
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                // ... up to 900
+              },
+              brown: { // For obstacles if needed
+                300: '#bcaaa4', // Original obstacle color
+              }
+            },
+            animation: {
+              'car-pop': 'carJumpIn 0.35s ease-out',
+              'car-shake': 'carShake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+              'car-dance': 'carDance 1.2s ease-in-out infinite',
+              'firework-burst': 'fireworkBurst 1.2s ease-out forwards',
+              'firework-minor-burst': 'fireworkMinorBurst 1s ease-out forwards',
+              'ping-short': 'ping 0.5s cubic-bezier(0, 0, 0.2, 1) 1', // One short ping for X
+              'view-fade-in': 'viewFadeIn 0.5s ease-out forwards',
+              'view-fade-out': 'viewFadeOut 0.5s ease-in forwards',
+              'view-slide-out-left': 'viewSlideOutLeft 0.4s ease-in forwards',
+              'view-slide-in-right': 'viewSlideInRight 0.5s ease-out forwards',
+              'view-slide-out-right': 'viewSlideOutRight 0.4s ease-in forwards',
+              'view-slide-in-left': 'viewSlideInLeft 0.5s ease-out forwards',
+              'level-slide-out': 'levelSlideOut 0.5s ease-in forwards',
+              'level-slide-in': 'levelSlideIn 0.5s ease-out forwards',
+              'modal-slide-in-up': 'modalSlideInUp 0.5s ease-out forwards',
+              'modal-slide-out-down': 'modalSlideOutDown 0.4s ease-in forwards',
+              'view-open-top': 'viewOpenFromTop 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+              'view-close-top': 'viewCloseToTop 0.5s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards',
+            },
+            keyframes: {
+              carJumpIn: {
+                '0%': { transform: 'translateY(10px) scale(0.8)', opacity: '0.5' },
+                '60%': { transform: 'translateY(-5px) scale(1.1)', opacity: '1' },
+                '100%': { transform: 'translateY(0) scale(1)', opacity: '1' },
+              },
+              carShake: {
+                '0%, 100%': { transform: 'translateX(0)' },
+                '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-6px)' }, /* Increased shake */
+                '20%, 40%, 60%, 80%': { transform: 'translateX(6px)' }, /* Increased shake */
+              },
+              carDance: { /* A more lively, continuous dance */
+                '0%, 100%': { transform: 'rotate(0deg) scale(1) translateY(0)' },
+                '20%': { transform: 'rotate(-8deg) scale(1.05) translateY(-3px)' },
+                '40%': { transform: 'rotate(8deg) scale(1.1) translateY(0px)' },
+                '60%': { transform: 'rotate(-5deg) scale(1.05) translateY(-2px)' },
+                '80%': { transform: 'rotate(5deg) scale(1.1) translateY(0px)' },
+              },
+              fireworkBurst: { // For major fireworks 🎉🎊
+                '0%': { transform: 'scale(0.3) translateY(30px)', opacity: '0' },
+                '50%': { opacity: '1' },
+                '100%': { transform: 'scale(1.2) translateY(-60px) rotate(15deg)', opacity: '0' },
+              },
+              fireworkMinorBurst: { // For minor fireworks ✨🌟💫
+                '0%': { transform: 'scale(0.2) translateY(15px)', opacity: '0' },
+                '50%': { opacity: '1' },
+                '100%': { transform: 'scale(0.8) translateY(-40px) rotate(-15deg)', opacity: '0' },
+              },
+              // Tailwind's default ping is infinite, we want a short one
+              ping: {
+                '75%, 100%': {
+                    transform: 'scale(1.5)', // Slightly smaller scale for X
+                    opacity: '0',
+                },
+              },
+              viewFadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              viewFadeOut: {
+                '0%': { opacity: '1' },
+                '100%': { opacity: '0' },
+              },
+              viewSlideOutLeft: {
+                '0%': { transform: 'translateX(0)', opacity: '1' },
+                '100%': { transform: 'translateX(-100%)', opacity: '0' },
+              },
+              viewSlideInRight: {
+                '0%': { transform: 'translateX(100%)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
+              },
+              viewSlideOutRight: {
+                '0%': { transform: 'translateX(0)', opacity: '1' },
+                '100%': { transform: 'translateX(100%)', opacity: '0' },
+              },
+              viewSlideInLeft: {
+                '0%': { transform: 'translateX(-100%)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
+              },
+              levelSlideOut: {
+                '0%': { transform: 'translateX(0)', opacity: '1' },
+                '100%': { transform: 'translateX(-100%)', opacity: '0' },
+              },
+              levelSlideIn: {
+                '0%': { transform: 'translateX(100%)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
+              },
+              modalSlideInUp: {
+                'from': { transform: 'translateY(100vh)', opacity: '0' },
+                'to': { transform: 'translateY(0)', opacity: '1' }
+              },
+              modalSlideOutDown: {
+                'from': { transform: 'translateY(0)', opacity: '1' },
+                'to': { transform: 'translateY(100vh)', opacity: '0' }
+              },
+              viewOpenFromTop: {
+                'from': { transform: 'scaleY(0)', opacity: '0', transformOrigin: 'top' },
+                'to': { transform: 'scaleY(1)', opacity: '1', transformOrigin: 'top' }
+              },
+              viewCloseToTop: {
+                'from': { transform: 'scaleY(1)', opacity: '1', transformOrigin: 'top' },
+                'to': { transform: 'scaleY(0)', opacity: '0', transformOrigin: 'top' }
+              },
+            }
+          }
+        }
+      }
+    </script>
+
+<link rel="stylesheet" href="/index.css">
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+  <script type="module" crossorigin src="./assets/index-BmqAKv-F.js"></script>
+</head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
